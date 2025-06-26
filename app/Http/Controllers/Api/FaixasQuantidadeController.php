@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\FaixaResource;
 use App\Http\Requests\StoreFaixaRequest;
+use App\Http\Resources\FaixaQuantidadeResource;
 
 class FaixasQuantidadeController extends Controller
 {
@@ -69,6 +70,13 @@ class FaixasQuantidadeController extends Controller
         ]);
     }
 
-  
+  public function faixasComProdutos($empresaId)
+    {
+        $faixas = FaixasQuantidade::with('productPrices')
+        ->where('empresa_id', $empresaId)
+        ->get();
+
+        return FaixaQuantidadeResource::collection($faixas);
+    }
     
 }

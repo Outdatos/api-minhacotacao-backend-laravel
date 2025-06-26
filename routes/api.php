@@ -106,6 +106,8 @@ Route::post('/gerar-pdf', [PDFController::class, 'gerar']);
     Route::post('product-prices/save', [ProductPriceController::class, 'saveProductPrices']);
 
 
+// routes/api.php
+Route::get('/empresa/{empresa}/faixas-com-produtos', [FaixasQuantidadeController::class, 'faixasComProdutos']);
 
 
 
