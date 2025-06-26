@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class AditionalItemsSeeder extends Seeder
+class AdditionalItemsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -73,6 +73,6 @@ class AditionalItemsSeeder extends Seeder
             return $item;
         }, $items);
 
-        DB::table('aditional_items')->insert($items);
+        DB::table('additional_items')->insert($items);
     }
 }
