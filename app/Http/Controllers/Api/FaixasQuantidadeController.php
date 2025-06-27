@@ -70,13 +70,27 @@ class FaixasQuantidadeController extends Controller
         ]);
     }
 
-  public function faixasComProdutos($empresaId)
+    // 🎖️ [Lógica Certificada] // Evita o problema 1 + N queries no loop map()
+    public function productsWithFaixasPrice($empresaId, $productId)
     {
-        $faixas = FaixasQuantidade::with('productPrices')
-        ->where('empresa_id', $empresaId)
-        ->get();
+        $faixas = FaixasQuantidade::where('empresa_id', $empresaId)->orderBy('min_qtd')->get();
 
-        return FaixaQuantidadeResource::collection($faixas);
+        $prices = ProductPrice::where('product_id', $productId)->get()->keyBy('faixa_id');
+
+        $faixasComPreco = $faixas->map(function ($faixa) use ($productId, $prices) {
+            $price = $prices->get($faixa->id);
+
+            return [
+                'faixa_id' => $faixa->id,
+                'min_qtd' => $faixa->min_qtd,
+                'max_qtd' => $faixa->max_qtd,
+                'empresa_id' => $faixa->empresa_id,
+                'product_id' => $productId,
+                'price' => $price?->price,
+            ];
+        });
+
+    return response()->json($faixasComPreco);
     }
     
 }

@@ -13,8 +13,9 @@ class FaixaQuantidadeResource extends JsonResource
             'faixa' => $this->id,
             'min_qtd' => $this->min_qtd,
             'max_qtd' => $this->max_qtd,
-            'product' => $this->productPrices->map(function ($price) {
+            'productInfo' => $this->productPrices->map(function ($price) {
                 return [
+                    'product_id' => $price->product_id,
                     'price' => $price->price,
                 ];
             })

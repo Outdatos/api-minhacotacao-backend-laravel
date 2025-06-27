@@ -80,6 +80,9 @@ Route::middleware('auth:sanctum')->group(function() {
 
     //Product Prices
 
+    Route::post('/product-prices/store-or-update', [ProductPriceController::class, 'storeOrUpdate']);
+    Route::get('/empresa/{empresaId}/faixas-com-produtos/{productId}/product-faixas', [FaixasQuantidadeController::class, 'productsWithFaixasPrice']);
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -107,7 +110,10 @@ Route::post('/gerar-pdf', [PDFController::class, 'gerar']);
 
 
 // routes/api.php
-Route::get('/empresa/{empresa}/faixas-com-produtos', [FaixasQuantidadeController::class, 'faixasComProdutos']);
+
+
+
+
 
 
 

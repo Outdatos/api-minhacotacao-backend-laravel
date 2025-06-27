@@ -88,4 +88,47 @@ class ProductPriceController extends Controller
 
         return response()->json(['message' => 'Tabela atualizada com sucesso!']);
     }
+
+    public function storeOrUpdate(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'faixas' => 'required|array',
+            'faixas.*.faixa_id' => 'required|exists:faixas_quantidade,id',
+            'faixas.*.price' => 'nullable|numeric',
+        ]);
+
+        $empresaId = auth()->user()->empresa_id;
+
+        foreach ($data['faixas'] as $faixa) {
+            if ($faixa['price'] === null) {
+                // Se o preço for null, exclui o registro, se pertencer à empresa do usuário
+                ProductPrice::where('product_id', $data['product_id'])
+                    ->where('faixa_id', $faixa['faixa_id'])
+                    ->whereHas('faixa', function ($query) use ($empresaId) {
+                        $query->where('empresa_id', $empresaId);
+                    })
+                    ->delete();
+            } else {
+                // Atualiza ou cria, apenas se a faixa for da empresa do usuário
+                $faixaPertence = \App\Models\FaixasQuantidade::where('id', $faixa['faixa_id'])
+                    ->where('empresa_id', $empresaId)
+                    ->exists();
+
+                if ($faixaPertence) {
+                    ProductPrice::updateOrCreate(
+                        [
+                            'product_id' => $data['product_id'],
+                            'faixa_id' => $faixa['faixa_id'],
+                        ],
+                        ['price' => $faixa['price']]
+                    );
+                }
+            }
+        }
+
+        return response()->json(['message' => 'Preços atualizados com segurança.']);
+    }
+
+
 }
