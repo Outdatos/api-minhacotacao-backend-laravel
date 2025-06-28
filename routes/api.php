@@ -36,8 +36,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('users-list/{id}', [UserController::class, 'destroy']);
     Route::post('user/logout', [UserController::class, 'logout']);
 
-    //Product Routes
-    Route::apiResource('products', ProductController::class);
 
     //Empresa
     Route::get('empresa', [EmpresaController::class, 'show']);
@@ -65,8 +63,12 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Categories e Products [process]
     Route::get('categories/{categoryId}/products', [CategoryController::class, 'indexProducts']);
-    Route::get('categories/{categoryId}/products/{productId}', [CategoryController::class, 'showProduct']);
+    Route::get('categories/{categoryId}/products/{productId}/faixas-to-calculate', [CategoryController::class, 'showProduct']);
    
+    //Product Routes
+    Route::apiResource('products', ProductController::class);
+    Route::post('products', [ProductController::class, 'store']);
+
     // Items [crud]
     Route::get('itens-adicionais', [AdditionalItemsController::class, 'index'] );
     Route::post('itens-adicionais', [AdditionalItemsController::class, 'store'] );
@@ -79,7 +81,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('/faixas-quantidade/{id}', [FaixasQuantidadeController::class, 'destroy']);
 
     //Product Prices
-
     Route::post('/product-prices/store-or-update', [ProductPriceController::class, 'storeOrUpdate']);
     Route::get('/empresa/{empresaId}/faixas-com-produtos/{productId}/product-faixas', [FaixasQuantidadeController::class, 'productsWithFaixasPrice']);
 

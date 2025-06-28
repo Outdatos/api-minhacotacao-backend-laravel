@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use App\Models\FaixasQuantidade;
+use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\FaixaResource;
@@ -70,12 +71,22 @@ class FaixasQuantidadeController extends Controller
         ]);
     }
 
-    // 🎖️ [Lógica Certificada] // Evita o problema 1 + N queries no loop map()
+    // 🎖️ [Lógica Certificada] // Evita o problema 1 + N queries no loop map() e keyBy
     public function productsWithFaixasPrice($empresaId, $productId)
     {
-        $faixas = FaixasQuantidade::where('empresa_id', $empresaId)->orderBy('min_qtd')->get();
+        $product = Product::find($productId);
 
-        $prices = ProductPrice::where('product_id', $productId)->get()->keyBy('faixa_id');
+        if (!$product) {
+            return response()->json(['error' => 'Produto não encontrado'], 404);
+        }
+
+        $faixas = FaixasQuantidade::where('empresa_id', $empresaId)
+            ->orderBy('min_qtd')
+            ->get();
+
+        $prices = ProductPrice::where('product_id', $productId)
+            ->get()
+            ->keyBy('faixa_id');
 
         $faixasComPreco = $faixas->map(function ($faixa) use ($productId, $prices) {
             $price = $prices->get($faixa->id);
@@ -84,13 +95,16 @@ class FaixasQuantidadeController extends Controller
                 'faixa_id' => $faixa->id,
                 'min_qtd' => $faixa->min_qtd,
                 'max_qtd' => $faixa->max_qtd,
-                'empresa_id' => $faixa->empresa_id,
-                'product_id' => $productId,
                 'price' => $price?->price,
             ];
         });
 
-    return response()->json($faixasComPreco);
+        return response()->json([
+            'data' => [
+                'productId' => $product->id,
+                'productName' => $product->name,
+                'faixasAndPrice' => $faixasComPreco,
+            ]
+        ]);
     }
-    
 }

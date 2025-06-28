@@ -25,50 +25,19 @@ class ProductController extends Controller
         //
     }
 
+    // 🎖️ [Lógica Certificada] //
     public function store(Request $request)
     {
-        DB::beginTransaction();
-    
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
             'descricao' => 'required|string|max:1000',  // Ensure descricao is a string.
         ]);
 
-        $product = Product::create([
-            'category_id' => $validated['category_id'],
-            'name' => $validated['name'],
-            'descricao' => $validated['descricao'],
-        ]);
+        $product = Product::create($validated);
 
-        $faixasQuantidade = FaixasQuantidade::all();
-
-        if ($faixasQuantidade->isEmpty()) {
-            return response()->json([
-                'message' => 'Não há faixas de quantidades cadastradas.',
-            ], 404);
-        }
-
-        $pricesData = []; // Array para armazenar os dados de preços
-        
-        foreach ($faixasQuantidade as $faixa) {
-            $pricesData[] = [
-                'product_id' => $product->id,
-                'faixa_id' => $faixa->id,
-                'created_at' => now(), // Don't forget to add timestamps
-                'updated_at' => now(),
-            ];
-        }
-
-        // Inserir todos os preços de uma vez para performance
-        ProductPrice::insert($pricesData);
-
-        // Commit da transação
-        DB::commit();
-
-        return response()->json([
+         return response()->json([
             'message' => 'Produto criado com sucesso!',
-            'product' => $product
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FaixaWithProductPriceResource;
+use App\Models\FaixasQuantidade;
 
 class ProductPriceController extends Controller
 {
@@ -39,56 +40,9 @@ class ProductPriceController extends Controller
         // Retornar usando o Resource para uma resposta formatada (se quiser)
         return FaixaWithProductPriceResource::collection($productPrices);
     }
+
     
-    public function edit(string $id)
-    {
-        //
-    }
-
-    public function update(Request $request, string $id)
-    {
-        //
-        // $productPrice = ProductPrice::findOrFail($id);
-
-        // $request->validate([
-        //     'product_id' => 'required|exists:products,id',
-        //     'price' => 'required|numeric',
-        // ]);
-
-        // $productPrice->update($request->all());
-
-        // return response()->json($productPrice);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-        // $productPrice = ProductPrice::findOrFail($id);
-        // $productPrice->delete();
-
-        // return response()->json(['message' => 'Product price deleted successfully']);
-    }
-
-    public function saveProductPrices(Request $request)
-    {
-        foreach ($request->prices as $priceData) {
-            ProductPrice::updateOrCreate(
-                [
-                    'product_id' => $priceData['product_id'],
-                    'faixa_id' => $priceData['faixa_id']
-                ],
-                [
-                    'price' => $priceData['price']
-                ]
-            );
-        }
-
-        return response()->json(['message' => 'Tabela atualizada com sucesso!']);
-    }
-
+    // 🎖️ [Lógica Certificada] // Evita 1 + N queries.
     public function storeOrUpdate(Request $request)
     {
         $data = $request->validate([
@@ -100,35 +54,32 @@ class ProductPriceController extends Controller
 
         $empresaId = auth()->user()->empresa_id;
 
+        $faixasValidas = FaixasQuantidade::where('empresa_id', $empresaId)
+            ->pluck('id')
+            ->toArray();
+
         foreach ($data['faixas'] as $faixa) {
+            $faixaId = $faixa['faixa_id'];
+
+            if (!in_array($faixaId, $faixasValidas)) {
+                continue; 
+            }
+
             if ($faixa['price'] === null) {
-                // Se o preço for null, exclui o registro, se pertencer à empresa do usuário
                 ProductPrice::where('product_id', $data['product_id'])
-                    ->where('faixa_id', $faixa['faixa_id'])
-                    ->whereHas('faixa', function ($query) use ($empresaId) {
-                        $query->where('empresa_id', $empresaId);
-                    })
+                    ->where('faixa_id', $faixaId)
                     ->delete();
             } else {
-                // Atualiza ou cria, apenas se a faixa for da empresa do usuário
-                $faixaPertence = \App\Models\FaixasQuantidade::where('id', $faixa['faixa_id'])
-                    ->where('empresa_id', $empresaId)
-                    ->exists();
-
-                if ($faixaPertence) {
-                    ProductPrice::updateOrCreate(
-                        [
-                            'product_id' => $data['product_id'],
-                            'faixa_id' => $faixa['faixa_id'],
-                        ],
-                        ['price' => $faixa['price']]
-                    );
-                }
+                ProductPrice::updateOrCreate(
+                    [
+                        'product_id' => $data['product_id'],
+                        'faixa_id' => $faixaId,
+                    ],
+                    ['price' => $faixa['price']]
+                );
             }
         }
 
-        return response()->json(['message' => 'Preços atualizados com segurança.']);
+        return response()->json(['message' => 'Preços atualizados com sucesso.']);
     }
-
-
 }
