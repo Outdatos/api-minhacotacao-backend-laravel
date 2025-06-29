@@ -11,6 +11,10 @@ class ProductPrice extends Model
     //
     protected $fillable = ['product_id', 'faixa_id', 'price'];
 
+    protected $casts = [
+    'price' => 'decimal:2',
+    ];
+
    // Accessor para retornar o preço como string, se necessário
    public function getPriceStringAttribute()
    {

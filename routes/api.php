@@ -24,9 +24,6 @@ Route::middleware('auth:sanctum')->group(function() {
 // 
 // 🔐 Rotas acessíveis para todos os usuários autenticados (user/admin)
     
-
-    
-
     //Vendedores
     Route::post('user/register', [UserController::class, 'store']);
     Route::get('users-list', [UserController::class, 'index']);
@@ -36,11 +33,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('users-list/{id}', [UserController::class, 'destroy']);
     Route::post('user/logout', [UserController::class, 'logout']);
 
-
     //Empresa
     Route::get('empresa', [EmpresaController::class, 'show']);
     Route::put('empresa', [EmpresaController::class, 'update']);
-
 
     //Master: empresas
     Route::get('empresas', [EmpresaController::class, 'showMasterEmpresas']);
@@ -50,9 +45,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::delete('empresas/{id}', [EmpresaController::class, 'destroyMasterEmpresas']);
     Route::put('admin-update/{id}', [EmpresaController::class, 'updateMasterAdmin']);
     Route::delete('admin-delete/{id}', [EmpresaController::class, 'destroyMasterAdmin']);
-
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Categories [crud]
     Route::get('categories', [CategoryController::class, 'index']);
@@ -65,9 +57,12 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('categories/{categoryId}/products', [CategoryController::class, 'indexProducts']);
     Route::get('categories/{categoryId}/products/{productId}/faixas-to-calculate', [CategoryController::class, 'showProduct']);
    
-    //Product Routes
+    //Product [crud]
     Route::apiResource('products', ProductController::class);
+
     Route::post('products', [ProductController::class, 'store']);
+    Route::put('products/{productId}/product-update', [ProductController::class, 'update']);
+    Route::delete('products/{productId}/product-delete', [ProductController::class, 'destroy']);
 
     // Items [crud]
     Route::get('itens-adicionais', [AdditionalItemsController::class, 'index'] );
@@ -84,9 +79,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/product-prices/store-or-update', [ProductPriceController::class, 'storeOrUpdate']);
     Route::get('/empresa/{empresaId}/faixas-com-produtos/{productId}/product-faixas', [FaixasQuantidadeController::class, 'productsWithFaixasPrice']);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
      // 🔐🔑 Rotas acessíveis apenas para administradores
     Route::middleware('admin')->group(function () {
@@ -99,18 +91,6 @@ Route::middleware('auth:sanctum')->group(function() {
 Route::post('user/login', [UserController::class, 'auth']);
 
 Route::post('/gerar-pdf', [PDFController::class, 'gerar']);
-
-
-
-
-
-    Route::get('product-prices', [ProductPriceController::class, 'index']);
-    Route::post('product-prices', [ProductPriceController::class, 'store']);
-    Route::get('product-prices/{productId}', [ProductPriceController::class, 'show']);
-    Route::post('product-prices/save', [ProductPriceController::class, 'saveProductPrices']);
-
-
-// routes/api.php
 
 
 
