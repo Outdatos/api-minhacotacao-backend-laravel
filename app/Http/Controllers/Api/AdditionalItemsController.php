@@ -50,14 +50,8 @@ class AdditionalItemsController extends Controller
             'empresa_id' => $user->empresa_id,
         ]);
     
-        // Retorna todos os itens ordenados alfabeticamente pela coluna 'descricao'
-        $itens = AdditionalItem::where('empresa_id', $user->empresa_id)
-            ->orderBy('descricao', 'asc')
-            ->get();
-    
         return response()->json([
             'message' => 'Item criado com sucesso',
-            'itens' => $itens
         ], 201);
     }
     

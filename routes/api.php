@@ -66,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Items [crud]
     Route::get('itens-adicionais', [AdditionalItemsController::class, 'index'] );
-    Route::post('itens-adicionais', [AdditionalItemsController::class, 'store'] );
+    Route::post('itens-adicionais/item-create', [AdditionalItemsController::class, 'store'] );
     Route::put('itens-adicionais/{itemId}', [AdditionalItemsController::class, 'update'] );
     Route::delete('itens-adicionais/{itemId}', [AdditionalItemsController::class, 'destroy'] );
 
