@@ -13,6 +13,7 @@ class AdditionalItemResource extends JsonResource
             'id' => $this->id,
             'descricao' => $this->descricao,
             'price'     => $this->price,
+            'cliche_price'     => $this->is_cliche_price,
         ];
     }
 }

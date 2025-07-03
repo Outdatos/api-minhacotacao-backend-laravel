@@ -106,7 +106,7 @@ class CategoryController extends Controller
         if (!$product) {
             return response()->json(['message' => 'Produto não encontrado nesta categoria'], 404);
         }
-
+        
         return new ProductWithPricesResource($product);
     }
 }

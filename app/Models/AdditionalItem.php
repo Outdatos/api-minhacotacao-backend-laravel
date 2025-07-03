@@ -8,7 +8,7 @@ use App\Models\Empresa;
 class AdditionalItem extends Model
 {
     //
-    protected $fillable = [ 'descricao', 'price', 'empresa_id' ];
+    protected $fillable = [ 'descricao', 'price', 'empresa_id', 'is_cliche_price' ];
 
     public function empresa()
     {
