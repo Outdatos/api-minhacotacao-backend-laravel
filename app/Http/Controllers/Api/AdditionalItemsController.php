@@ -39,15 +39,16 @@ class AdditionalItemsController extends Controller
         }
 
         $request->validate([
-            'descricao' => 'required|string|max:255',
-            'price' => 'required|numeric',
+        'descricao' => 'required|string|max:255',
+        'price' => 'required|numeric',
+        'is_cliche_price' => 'sometimes|boolean',
         ]);
-    
-        // Cria o novo item
+
         $item = AdditionalItem::create([
             'descricao' => $request->descricao,
             'price' => $request->price,
             'empresa_id' => $user->empresa_id,
+            'is_cliche_price' => $request->is_cliche_price,
         ]);
     
         return response()->json([
