@@ -18,13 +18,16 @@ class ProductController extends Controller
         $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'name' => 'required|string|max:255',
-            'descricao' => 'required|string|max:1000',  
+            'descricao' => 'required|string|max:1000',
         ]);
+
+        $validated['empresa_id'] = $request->user()->empresa_id;
 
         $product = Product::create($validated);
 
-         return response()->json([
+        return response()->json([
             'message' => 'Produto criado com sucesso!',
+            'product' => $product,
         ]);
     }
     

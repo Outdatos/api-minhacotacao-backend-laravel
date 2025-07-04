@@ -11,7 +11,8 @@ class ProductWithPricesResource extends JsonResource
     {
         return [
             'category' => $this->category->name,
-            'product' => $this->name,
+            'product_id' => $this->id,
+            'product_name' => $this->name,
             'descricao' => $this->descricao,
             'faixas' => $this->prices->map(function ($price) {
                 return [

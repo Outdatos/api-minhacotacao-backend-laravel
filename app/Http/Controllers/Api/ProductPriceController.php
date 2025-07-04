@@ -75,7 +75,10 @@ class ProductPriceController extends Controller
                         'product_id' => $data['product_id'],
                         'faixa_id' => $faixaId,
                     ],
-                    ['price' => $faixa['price']]
+                    [
+                        'price' => $faixa['price'],
+                        'empresa_id' => $empresaId,
+                    ]
                 );
             }
         }

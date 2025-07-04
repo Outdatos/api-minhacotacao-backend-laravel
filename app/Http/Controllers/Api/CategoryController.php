@@ -97,16 +97,20 @@ class CategoryController extends Controller
     }
 
     // 🎖️ [Lógica Certificada] //
-    public function showProduct($categoryId, $productId)
+    public function showFaixasProduct($categoryId, $productId)
     {
+        $empresaId = auth()->user()->empresa_id;
+
         $product = Product::with(['category', 'prices.faixa'])
             ->where('category_id', $categoryId)
-            ->find($productId);
+            ->where('id', $productId)
+            ->where('empresa_id', $empresaId) // ✅ garante que pertence à empresa
+            ->first();
 
         if (!$product) {
-            return response()->json(['message' => 'Produto não encontrado nesta categoria'], 404);
+            return response()->json(['message' => 'Produto não encontrado nesta categoria ou não pertence à sua empresa'], 404);
         }
-        
+
         return new ProductWithPricesResource($product);
     }
 }

@@ -5,24 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 use App\Models\FaixasQuantidade;
+use App\Models\Empresa;
 
 class ProductPrice extends Model
 {
     //
-    protected $fillable = ['product_id', 'faixa_id', 'price'];
-
-    protected $casts = [
-    'price' => 'decimal:2',
-    ];
-
-   // Accessor para retornar o preço como string, se necessário
-   public function getPriceStringAttribute()
-   {
-       if ($this->price === null) {
-           return ''; // 
-       }
-       return number_format($this->price, 2, ',', '.');
-   }
+    protected $fillable = ['product_id', 'faixa_id', 'price', 'empresa_id'];
 
     // Relationships
     public function product()
@@ -33,5 +21,10 @@ class ProductPrice extends Model
      public function faixa()
     {
         return $this->belongsTo(FaixasQuantidade::class, 'faixa_id');
+    }
+
+     public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
     }
 }

@@ -22,5 +22,4 @@ class FaixasQuantidade extends Model
     {
         return $this->belongsTo(Empresa::class, 'empresa_id');
     }
-
 }

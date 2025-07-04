@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     // Categories e Products [process]
     Route::get('categories/{categoryId}/products', [CategoryController::class, 'indexProducts']);
-    Route::get('categories/{categoryId}/products/{productId}/faixas-to-calculate', [CategoryController::class, 'showProduct']);
+    Route::get('categories/{categoryId}/products/{productId}/faixas-to-calculate', [CategoryController::class, 'showFaixasProduct']);
    
     //Product [crud]
     Route::apiResource('products', ProductController::class);

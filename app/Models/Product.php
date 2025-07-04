@@ -10,7 +10,7 @@ use App\Models\Empresa;
 class Product extends Model
 {
     //
-    protected $fillable = [ 'category_id', 'name', 'descricao'];
+    protected $fillable = ['category_id', 'name', 'descricao', 'empresa_id'];
 
     public function category()
     {
@@ -20,5 +20,10 @@ class Product extends Model
     public function prices()
     {
         return $this->hasMany(ProductPrice::class);
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
     }
 }
