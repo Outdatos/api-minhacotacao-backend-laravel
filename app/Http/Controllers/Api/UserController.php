@@ -120,23 +120,30 @@ class UserController extends Controller
     /**
      *  Login User
      */
-    public function auth(AuthUserRequest $request)
-    {
-        if($request->validated()) {
-            $user = User::with('empresa')->whereEmail($request->email)->first();
-            if(!$user || !Hash::check($request->password, $user->password)) {
-                return response()->json([
-                    'error' => 'Credenciais inválidas'
-                ]);
-            }else {
-                return response()->json([
-                    'user' => UserResource::make($user),
-                    'access_token' => $user->createToken('new_user')->plainTextToken,
-                    'message' => 'Login realizado com sucesso'
-                ]);
-            }
+   public function auth(AuthUserRequest $request)
+{
+    if($request->validated()) {
+        $user = User::with('empresa')->whereEmail($request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'error' => 'Credenciais inválidas'
+            ]);
         }
+
+        // 🔒 Revoga todos os tokens existentes (sessão única)
+        $user->tokens()->delete();
+
+        // 🔑 Cria novo token
+        $token = $user->createToken('new_user')->plainTextToken;
+
+        return response()->json([
+            'user' => UserResource::make($user),
+            'access_token' => $token,
+            'message' => 'Login realizado com sucesso'
+        ]);
     }
+}
 
     /**
      * Logout the user
